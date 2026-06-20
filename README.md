@@ -10,17 +10,6 @@ SQL Injection Security Lab
 Mô phỏng tấn công SQL Injection và các cơ chế phòng thủ bằng Spring Boot & MySQL
 </p>
 
-<p align="center">
-  <img src="images/GD0.3.jpeg" width="50%">
-</p>
-
-<h1 align="center">
-SQL Injection Security Lab
-</h1>
-
-<p align="center">
-Hệ thống mô phỏng tấn công SQL Injection và các cơ chế bảo mật ứng dụng Web bằng Spring Boot & MySQL
-</p>
 
 ## 👥 THÀNH VIÊN
 

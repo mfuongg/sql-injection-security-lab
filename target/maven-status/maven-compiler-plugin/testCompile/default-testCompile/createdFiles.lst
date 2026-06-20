@@ -1,0 +1,9 @@
+com/example/sqlinjectiondemo/integration/TwoFactorPersistenceIT.class
+com/example/sqlinjectiondemo/service/SecurityLogServiceTest.class
+com/example/sqlinjectiondemo/security/SecureAuthenticationStrategyTest.class
+com/example/sqlinjectiondemo/controller/DashboardTemplateRenderingTest.class
+com/example/sqlinjectiondemo/service/PdfReportServiceTest.class
+com/example/sqlinjectiondemo/controller/SecurityWorkbenchControllerTest.class
+com/example/sqlinjectiondemo/service/SqlInjectionDetectorServiceTest.class
+com/example/sqlinjectiondemo/controller/AdminTemplateRenderingTest.class
+com/example/sqlinjectiondemo/service/UserServiceTest.class

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ma trận phòng thủ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-bg-light">
+<nav class="navbar navbar-expand-lg app-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">Hệ thống kiểm thử bảo mật</a>
+        <div class="navbar-nav ms-auto d-flex flex-row gap-3 flex-wrap align-items-center">
+            <a class="nav-link" th:href="@{/dashboard}">Tổng quan</a>
+            <a class="nav-link" th:href="@{/attack-lab}">Phòng lab tấn công</a>
+            <a class="nav-link active" th:href="@{/defense-matrix}">Ma trận phòng thủ</a>
+            <a class="nav-link" th:href="@{/security-workbench}">Phân tích bảo mật</a>
+            <a class="nav-link" th:href="@{/users}">Tài khoản</a>
+            <a class="nav-link" th:href="@{/logs}">Nhật ký kiểm toán</a>
+            <a class="nav-link text-warning" th:href="@{/logout}">Đăng xuất</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4 py-lg-5">
+    <section class="hero-card mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-8">
+                <span class="hero-eyebrow text-primary">MA TRẬN PHÒNG THỦ</span>
+                <h1 class="hero-title mb-2">Tóm tắt các lớp kiểm soát bảo mật</h1>
+
+                <a class="btn btn-primary rounded-4" th:href="@{/reports/security-test.pdf}">Xuất PDF báo cáo kiểm thử</a>
+            </div>
+            <div class="col-lg-4">
+                <div class="surface-card h-100 text-center">
+                    <div class="section-kicker">Điểm hệ thống</div>
+                    <div class="score-ring mx-auto my-2"><span th:text="${systemScore}"></span></div>
+                    <div class="text-muted">Điểm tổng quan toàn hệ thống.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="row g-4 mb-4">
+        <div class="col-md-6 col-xl-3"><div class="metric-panel danger"><div class="metric-label">Nghiêm trọng</div><div class="metric-value" th:text="${criticalCount}"></div></div></div>
+        <div class="col-md-6 col-xl-3"><div class="metric-panel warning"><div class="metric-label">Cao</div><div class="metric-value" th:text="${highCount}"></div></div></div>
+        <div class="col-md-6 col-xl-3"><div class="metric-panel"><div class="metric-label">Trung bình</div><div class="metric-value" th:text="${mediumCount}"></div></div></div>
+        <div class="col-md-6 col-xl-3"><div class="metric-panel success"><div class="metric-label">Thấp</div><div class="metric-value" th:text="${lowCount}"></div></div></div>
+    </section>
+
+    <section class="matrix-grid mb-4">
+        <article class="matrix-card">
+            <div class="matrix-kicker">Lớp 1</div>
+            <h3>Phát hiện SQL injection</h3>
+            <p>Bộ detector nhận diện keyword nguy hiểm, comment operator, stacked query, time-delay và schema enumeration.</p>
+            <ul>
+                <li>Phân mức rủi ro từ LOW đến CRITICAL</li>
+                <li>Payload nghi ngờ được ghi vào nhật ký kiểm toán</li>
+                <li>Phù hợp minh họa detection-based defense</li>
+            </ul>
+        </article>
+        <article class="matrix-card">
+            <div class="matrix-kicker">Lớp 2</div>
+            <h3>Xác thực an toàn</h3>
+            <p>Đối chiếu trực tiếp giữa truy vấn vulnerable nối chuỗi và truy vấn secure tham số hóa dùng BCrypt.</p>
+            <ul>
+                <li>Phòng lab tấn công cho thấy cùng payload nhưng kết quả khác nhau</li>
+                <li>Thông báo lỗi secure không lộ chi tiết kỹ thuật</li>
+                <li>Giúp giải thích rõ giá trị của prepared-style lookup</li>
+            </ul>
+        </article>
+        <article class="matrix-card">
+            <div class="matrix-kicker">Lớp 3</div>
+            <h3>Phân quyền và kiểm toán</h3>
+            <p>Tách rõ khu vực quản trị, khu vực người dùng và nhật ký bảo mật để phục vụ kiểm tra quyền truy cập.</p>
+            <ul>
+                <li>Admin có quyền vào phòng lab, ma trận phòng thủ, tài khoản và nhật ký</li>
+                <li>User chỉ xem dữ liệu cá nhân</li>
+                <li>Nhật ký lưu mode, risk score, detector summary và trạng thái</li>
+            </ul>
+        </article>
+        <article class="matrix-card">
+            <div class="matrix-kicker">Lớp 4</div>
+            <h3>Hardening hệ thống</h3>
+            <p>Ứng dụng trả về security headers, chặn lộ lỗi SQL thô ra giao diện và áp dụng khóa tạm thời sau nhiều lần sai liên tiếp.</p>
+            <ul>
+                <li>CSP, nosniff, frame deny, no-store</li>
+                <li>Khóa tạm thời giảm brute-force</li>
+                <li>Log thường che mật khẩu, chỉ giữ payload đáng ngờ cho phân tích</li>
+            </ul>
+        </article>
+    </section>
+
+    <section class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="surface-card h-100">
+                <div class="section-kicker">Chứng cứ bảo mật</div>
+                <h3 class="section-title">Chỉ số quan sát</h3>
+                <div class="metric-inline"><span>Tổng sự kiện</span><strong th:text="${stats.totalLogs}"></strong></div>
+                <div class="metric-inline"><span>Sự kiện nghi ngờ</span><strong th:text="${stats.suspiciousCount}"></strong></div>
+                <div class="metric-inline"><span>Bypass trên vulnerable</span><strong th:text="${stats.vulnerableSuccessCount}"></strong></div>
+                <div class="metric-inline"><span>Fail hoặc block trên secure</span><strong th:text="${stats.secureFailedCount}"></strong></div>
+                <div class="metric-inline"><span>Tổng điểm rubric</span><strong th:text="${totalTestPoints} + ' điểm'"></strong></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="surface-card h-100">
+                <div class="section-kicker">Ưu tiên hiện tại</div>
+                <h3 class="section-title">Sự kiện cần xem trước</h3>
+                <div class="timeline-list mt-3">
+                    <div class="timeline-item" th:each="log : ${highRiskEvents}">
+                        <div class="timeline-top">
+                            <strong th:text="${log.usernameInput}"></strong>
+                            <span th:text="${#temporals.format(log.eventTime, 'dd/MM/yyyy HH:mm:ss')}"></span>
+                        </div>
+                        <div class="timeline-body" th:text="${log.message}"></div>
+                        <div class="timeline-meta">
+                            <span th:text="${log.loginMode}"></span>
+                            <span th:text="${log.riskLevel + ' · ' + log.riskScore}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="surface-card">
+            <div class="section-kicker">Rubric chấm điểm</div>
+            <h3 class="section-title">Test cases bảo mật đề xuất</h3>
+            <div class="table-responsive mt-3">
+                <table class="table table-modern align-middle">
+                    <thead><tr><th>Mã</th><th>Hạng mục</th><th>Mục tiêu</th><th>Dữ liệu kiểm thử</th><th>Kỳ vọng</th><th>Điểm</th><th>Lớp kiểm soát</th></tr></thead>
+                    <tbody>
+                    <tr th:each="item : ${testCases}">
+                        <td th:text="${item.code}"></td>
+                        <td th:text="${item.title}"></td>
+                        <td class="small text-break" th:text="${item.objective}"></td>
+                        <td class="small text-break" th:text="${item.testData}"></td>
+                        <td class="small text-break" th:text="${item.expectedResult}"></td>
+                        <td th:text="${item.points}"></td>
+                        <td th:text="${item.controlLayer}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: sqli-mysql
+    environment:
+      MYSQL_DATABASE: sql_injection_demo
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeMe123!}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/mysql_setup.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: sqli-demo-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      SESSION_COOKIE_SECURE: "false"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sql_injection_demo?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeMe123!}
+      SPRING_JPA_SHOW_SQL: "false"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

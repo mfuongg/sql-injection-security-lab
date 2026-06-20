@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hệ thống kiểm thử bảo mật - Đăng nhập</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-bg auth-page">
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-100 py-4">
+        <div class="col-xl-11">
+            <div class="premium-shell overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-lg-6 brand-panel text-white p-4 p-lg-5">
+                        <div class="hero-eyebrow">HỆ THỐNG KIỂM THỬ BẢO MẬT</div>
+                        <h1 class="display-6 fw-bold mb-3">SQL Injection Security Lab: Hệ thống mô phỏng tấn công và phòng thủ</h1>
+
+
+                        <div class="hero-image mb-4">
+                            <img src="/images/sql-injection-banner.png"
+                                 alt="SQL Injection Security Lab">
+                        </div>
+
+                        <div class="demo-accounts">
+                            <div class="small text-uppercase text-white-50 mb-2">Tài khoản mẫu</div>
+                            <div class="account-row">
+                                <span>admin / 123456</span>
+                                <span class="badge rounded-pill text-bg-light">ADMIN</span>
+                            </div>
+                            <div class="account-row">
+                                <span>user / 123456</span>
+                                <span class="badge rounded-pill text-bg-light">USER</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 surface-panel p-4 p-lg-5">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+
+                                <h2 class="fw-bold mb-1">Đăng nhập hệ thống</h2>
+
+                            </div>
+                            <span class="status-dot"></span>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger rounded-4" th:text="${error}"></div>
+                        <div th:if="${success}" class="alert alert-success rounded-4" th:text="${success}"></div>
+                        <div th:if="${warning}" class="alert alert-warning rounded-4" th:text="${warning}"></div>
+
+                        <form method="post" th:action="@{/login}" class="vstack gap-3" autocomplete="off">
+                            <div>
+                                <label class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control form-control-lg" name="username" th:value="${prefillUsername}" maxlength="32" autocomplete="username" required>
+                            </div>
+                            <div>
+                                <label class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control form-control-lg" name="password" th:value="${prefillPassword}" placeholder="Nhập mật khẩu hoặc chuỗi kiểm thử" autocomplete="current-password" required>
+                            </div>
+                            <div>
+                                <label class="form-label">Chế độ đăng nhập</label>
+                                <select class="form-select form-select-lg" name="mode">
+                                    <option value="secure" th:selected="${prefillMode == 'secure'}">Chế độ secure</option>
+                                    <option value="vulnerable" th:selected="${prefillMode == 'vulnerable'}">Chế độ vulnerable</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-4">Truy cập hệ thống</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

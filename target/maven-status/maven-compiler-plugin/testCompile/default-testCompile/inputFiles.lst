@@ -1,0 +1,9 @@
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/controller/AdminTemplateRenderingTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/controller/DashboardTemplateRenderingTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/controller/SecurityWorkbenchControllerTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/integration/TwoFactorPersistenceIT.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/security/SecureAuthenticationStrategyTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/service/PdfReportServiceTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/service/SecurityLogServiceTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/service/SqlInjectionDetectorServiceTest.java
+/home/user/work/dicedb20/sql-injection-demo/src/test/java/com/example/sqlinjectiondemo/service/UserServiceTest.java

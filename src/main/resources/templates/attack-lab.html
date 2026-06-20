@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phòng lab tấn công</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-bg-light">
+<nav class="navbar navbar-expand-lg app-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">Hệ thống kiểm thử bảo mật</a>
+        <div class="navbar-nav ms-auto d-flex flex-row gap-3 flex-wrap align-items-center">
+            <a class="nav-link" th:href="@{/dashboard}">Tổng quan</a>
+            <a class="nav-link active" th:href="@{/attack-lab}">Phòng lab tấn công</a>
+            <a class="nav-link" th:href="@{/defense-matrix}">Ma trận phòng thủ</a>
+            <a class="nav-link" th:href="@{/security-workbench}">Phân tích bảo mật</a>
+            <a class="nav-link" th:href="@{/users}">Tài khoản</a>
+            <a class="nav-link" th:href="@{/logs}">Nhật ký kiểm toán</a>
+            <a class="nav-link text-warning" th:href="@{/logout}">Đăng xuất</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4 py-lg-5">
+    <section class="hero-card mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-8">
+                <span class="hero-eyebrow text-primary">PHÒNG LAB TẤN CÔNG</span>
+                <h1 class="hero-title mb-2">Đối chiếu SQL injection giữa hai luồng xác thực</h1>
+
+            </div>
+            <div class="col-lg-4">
+                <div class="surface-card h-100">
+                    <div class="metric-inline"><span>Payload mẫu</span><strong th:text="${#lists.size(payloads)}"></strong></div>
+                    <div class="metric-inline"><span>Luồng so sánh</span><strong>2</strong></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="surface-card h-100">
+                <div class="section-kicker">Thiết lập mô phỏng</div>
+                <h3 class="section-title">Nhập dữ liệu thử nghiệm</h3>
+                <form method="post" th:action="@{/attack-lab/simulate}" class="vstack gap-3 mt-3" autocomplete="off">
+                    <div>
+                        <label class="form-label">Tài khoản</label>
+                        <input type="text" class="form-control" name="username" th:value="${prefillUsername}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Payload</label>
+                        <input id="payloadField" type="text" class="form-control" name="payload" th:value="${prefillPayload}" required>
+                    </div>
+                    <button class="btn btn-primary rounded-4">Chạy mô phỏng</button>
+                </form>
+
+                <div class="section-kicker mt-4">Thư viện payload</div>
+                <div class="payload-list mt-3">
+                    <div class="payload-card" th:each="payload : ${payloads}">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                <h6 class="fw-bold mb-1" th:text="${payload.name}"></h6>
+                                <div class="small text-muted mb-2" th:text="${payload.attackType}"></div>
+                                <code class="d-block mb-2 text-break" th:text="${payload.payload}"></code>
+                                <div class="small text-muted" th:text="${payload.description}"></div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-4" th:attr="data-payload=${payload.payload}" onclick="fillPayload(this)">Dùng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="surface-card h-100">
+                <div class="section-kicker">Kết quả đối chiếu</div>
+                <h3 class="section-title">So sánh trực tiếp hai luồng</h3>
+                <div th:if="${simulation == null}" class="empty-state mt-3">Chưa có dữ liệu mô phỏng.</div>
+                <div th:if="${simulation != null}" class="mt-3">
+                    <div class="surface-note mb-3"><strong>Detector:</strong> <span th:text="${simulation.detectionResult.summary}"></span></div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="compare-box compare-danger h-100">
+                                <div class="compare-title">Luồng vulnerable</div>
+                                <div class="compare-line"><span>Trạng thái</span><strong th:text="${simulation.vulnerableResult.status}"></strong></div>
+                                <div class="compare-line"><span>Kết quả</span><strong th:text="${simulation.vulnerableResult.message}"></strong></div>
+                                <pre class="mt-3"><code th:text="${simulation.vulnerableResult.queryPreview}"></code></pre>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="compare-box compare-safe h-100">
+                                <div class="compare-title">Luồng secure</div>
+                                <div class="compare-line"><span>Trạng thái</span><strong th:text="${simulation.secureResult.status}"></strong></div>
+                                <div class="compare-line"><span>Kết quả</span><strong th:text="${simulation.secureResult.message}"></strong></div>
+                                <pre class="mt-3"><code th:text="${simulation.secureResult.queryPreview}"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillPayload(button) {
+        document.getElementById('payloadField').value = button.getAttribute('data-payload');
+    }
+</script>
+</body>
+</html>

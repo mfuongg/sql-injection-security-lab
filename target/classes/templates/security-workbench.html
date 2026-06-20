@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phân tích bảo mật</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-bg-light">
+<nav class="navbar navbar-expand-lg app-navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">Hệ thống kiểm thử bảo mật</a>
+        <div class="navbar-nav ms-auto d-flex flex-row gap-3 align-items-center flex-wrap justify-content-end">
+            <a class="nav-link" th:href="@{/dashboard}">Tổng quan</a>
+            <a class="nav-link" th:href="@{/attack-lab}">Phòng lab tấn công</a>
+            <a class="nav-link active" th:href="@{/security-workbench}">Phân tích bảo mật</a>
+            <a class="nav-link" th:href="@{/defense-matrix}">Ma trận phòng thủ</a>
+            <a class="nav-link" th:href="@{/users}">Tài khoản</a>
+            <a class="nav-link" th:href="@{/logs}">Nhật ký kiểm toán</a>
+            <a class="nav-link text-warning" th:href="@{/logout}">Đăng xuất</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4 py-lg-5">
+    <div th:if="${error}" class="alert alert-danger rounded-4" th:text="${error}"></div>
+
+    <section class="hero-card mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-8">
+                <span class="hero-eyebrow text-primary">PHÂN TÍCH BẢO MẬT</span>
+                <h1 class="hero-title mb-2">Bổ sung tính thực tế: quét tệp, phân tích QR và crypto lab</h1>
+                <p class="hero-copy fs-5 mb-0">
+                    Khu vực này biến đồ án từ demo SQL injection thành một mini security console có thể kiểm tra tệp tải lên,
+                    nhận diện nội dung QR đáng ngờ, tạo fingerprint và thử các thao tác mã hóa cơ bản.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <div class="surface-card h-100">
+                    <div class="metric-inline"><span>Module</span><strong>3</strong></div>
+                    <div class="metric-inline"><span>Use case</span><strong>Quét · Giải mã · Mã hóa</strong></div>
+                    <div class="metric-inline"><span>Quản trị</span><strong>Admin-only</strong></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="row g-4">
+        <div class="col-lg-4">
+            <div class="surface-card h-100">
+                <div class="section-kicker">1. File screening</div>
+                <h3 class="section-title">Quét tệp tải lên</h3>
+                <form method="post" enctype="multipart/form-data" th:action="@{/security-workbench/file-scan}" class="vstack gap-3 mt-3">
+                    <input type="hidden" name="csrfToken" th:value="${csrfToken}">
+                    <input class="form-control" type="file" name="file" required>
+                    <button class="btn btn-primary rounded-4">Phân tích tệp</button>
+                </form>
+                <div class="surface-note mt-3 small">Heuristic hiện tại: đuôi thực thi, header MZ, chuỗi PowerShell/cmd, payload SQLi, script động và dấu hiệu lộ secret.</div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="surface-card h-100">
+                <div class="section-kicker">2. QR screening</div>
+                <h3 class="section-title">Kiểm tra mã QR</h3>
+                <form method="post" enctype="multipart/form-data" th:action="@{/security-workbench/qr-scan}" class="vstack gap-3 mt-3">
+                    <input type="hidden" name="csrfToken" th:value="${csrfToken}">
+                    <input class="form-control" type="file" name="file" accept="image/*" required>
+                    <button class="btn btn-primary rounded-4">Giải mã QR</button>
+                </form>
+                <div class="surface-note mt-3 small">Kiểm tra URL không HTTPS, URL rút gọn, IP-based URL, scheme lạ, từ khóa login/verify/password và QR Wi‑Fi.</div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="surface-card h-100">
+                <div class="section-kicker">3. Crypto lab</div>
+                <h3 class="section-title">Băm, Base64, AES/GCM</h3>
+                <form method="post" th:action="@{/security-workbench/crypto}" class="vstack gap-3 mt-3">
+                    <input type="hidden" name="csrfToken" th:value="${csrfToken}">
+                    <select class="form-select" name="operation" th:value="${selectedOperation}">
+                        <option value="sha256">SHA-256</option>
+                        <option value="md5">MD5</option>
+                        <option value="base64-encode">Base64 Encode</option>
+                        <option value="base64-decode">Base64 Decode</option>
+                        <option value="aes-encrypt">AES/GCM Encrypt</option>
+                        <option value="aes-decrypt">AES/GCM Decrypt</option>
+                    </select>
+                    <textarea class="form-control" rows="5" name="inputValue" placeholder="Nhập dữ liệu cần xử lý" th:text="${inputValue}"></textarea>
+                    <input class="form-control" type="text" name="secret" placeholder="Passphrase (chỉ cần cho AES)">
+                    <button class="btn btn-primary rounded-4">Chạy crypto</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="row g-4 mt-1">
+        <div class="col-lg-6" th:if="${fileScanResult != null}">
+            <div class="surface-card h-100">
+                <div class="section-kicker">Kết quả quét tệp</div>
+                <h3 class="section-title" th:text="${fileScanResult.fileName}"></h3>
+                <div class="mini-stat-row mt-3">
+                    <div class="mini-stat"><span>MIME</span><strong th:text="${fileScanResult.mimeType}"></strong></div>
+                    <div class="mini-stat"><span>Kích thước</span><strong th:text="${fileScanResult.sizeBytes + ' bytes'}"></strong></div>
+                    <div class="mini-stat"><span>Rủi ro</span><strong th:text="${fileScanResult.riskLevel + ' · ' + fileScanResult.riskScore}"></strong></div>
+                </div>
+                <div class="surface-note mt-3" th:text="${fileScanResult.summary}"></div>
+                <div class="mt-3 small text-break"><strong>SHA-256:</strong> <span th:text="${fileScanResult.sha256}"></span></div>
+                <div class="mt-2 small text-break"><strong>MD5:</strong> <span th:text="${fileScanResult.md5}"></span></div>
+                <div class="payload-list mt-3">
+                    <div class="payload-card" th:each="finding : ${fileScanResult.findings}">
+                        <div class="fw-bold" th:text="${finding.severity + ' · ' + finding.title}"></div>
+                        <div class="small text-muted" th:text="${finding.detail}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6" th:if="${qrScanResult != null}">
+            <div class="surface-card h-100">
+                <div class="section-kicker">Kết quả QR</div>
+                <h3 class="section-title" th:text="${qrScanResult.fileName}"></h3>
+                <div class="mini-stat-row mt-3">
+                    <div class="mini-stat"><span>Loại</span><strong th:text="${qrScanResult.payloadType}"></strong></div>
+                    <div class="mini-stat"><span>Rủi ro</span><strong th:text="${qrScanResult.riskLevel + ' · ' + qrScanResult.riskScore}"></strong></div>
+                </div>
+                <div class="surface-note mt-3" th:text="${qrScanResult.summary}"></div>
+                <pre class="mt-3"><code th:text="${qrScanResult.decodedText}"></code></pre>
+                <div class="payload-list mt-3">
+                    <div class="payload-card" th:each="finding : ${qrScanResult.findings}">
+                        <div class="fw-bold" th:text="${finding.severity + ' · ' + finding.title}"></div>
+                        <div class="small text-muted" th:text="${finding.detail}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12" th:if="${cryptoResult != null}">
+            <div class="surface-card">
+                <div class="section-kicker">Kết quả crypto</div>
+                <h3 class="section-title" th:text="${cryptoResult.operation}"></h3>
+                <div class="surface-note mt-3" th:text="${cryptoResult.note}"></div>
+                <pre class="mt-3"><code th:text="${cryptoResult.outputValue}"></code></pre>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

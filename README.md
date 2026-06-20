@@ -455,4 +455,3 @@ Trong tương lai có thể mở rộng:
 <p align="center">
 <img src="images/GD7.jpeg" width="80%">
 </p>
-
